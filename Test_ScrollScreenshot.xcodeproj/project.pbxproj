@@ -16,6 +16,7 @@
 		A871C2B42AF2D5990076E0A9 /* HotKeyChar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A871C2B02AF2D5760076E0A9 /* HotKeyChar.swift */; };
 		A871C2B52AF2D5990076E0A9 /* KeyCombo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A871C2AE2AF2D5760076E0A9 /* KeyCombo.swift */; };
 		A871C2B62AF2D5990076E0A9 /* HotKeysController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A871C2AF2AF2D5760076E0A9 /* HotKeysController.swift */; };
+		A871C2B92AF2E1C40076E0A9 /* AccessibilityPermissionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A871C2B82AF2E1C40076E0A9 /* AccessibilityPermissionsManager.swift */; };
 		A8CB21C32ADBE4F700AF1C78 /* ScreenshotTaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB21C22ADBE4F700AF1C78 /* ScreenshotTaker.swift */; };
 		A8CB21C52ADBE55A00AF1C78 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB21C42ADBE55A00AF1C78 /* ContentViewModel.swift */; };
 		A8FA08702AEFD62800FCDCAE /* SelectionWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FA086F2AEFD62800FCDCAE /* SelectionWindowController.swift */; };
@@ -35,6 +36,7 @@
 		A871C2AF2AF2D5760076E0A9 /* HotKeysController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeysController.swift; sourceTree = "<group>"; };
 		A871C2B02AF2D5760076E0A9 /* HotKeyChar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyChar.swift; sourceTree = "<group>"; };
 		A871C2B12AF2D5760076E0A9 /* HotKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKey.swift; sourceTree = "<group>"; };
+		A871C2B82AF2E1C40076E0A9 /* AccessibilityPermissionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPermissionsManager.swift; sourceTree = "<group>"; };
 		A8CB21C22ADBE4F700AF1C78 /* ScreenshotTaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTaker.swift; sourceTree = "<group>"; };
 		A8CB21C42ADBE55A00AF1C78 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		A8FA086F2AEFD62800FCDCAE /* SelectionWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionWindowController.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 		A80BB1E22ADBE433003F06AC /* Test_ScrollScreenshot */ = {
 			isa = PBXGroup;
 			children = (
+				A871C2B72AF2E1A90076E0A9 /* Accessibility */,
 				A871C2AC2AF2D5760076E0A9 /* HotKey */,
 				A8FA086E2AEFD36900FCDCAE /* Selection area */,
 				A8FA086D2AEFB19A00FCDCAE /* Main View */,
@@ -102,6 +105,14 @@
 				A871C2B12AF2D5760076E0A9 /* HotKey.swift */,
 			);
 			path = HotKey;
+			sourceTree = "<group>";
+		};
+		A871C2B72AF2E1A90076E0A9 /* Accessibility */ = {
+			isa = PBXGroup;
+			children = (
+				A871C2B82AF2E1C40076E0A9 /* AccessibilityPermissionsManager.swift */,
+			);
+			path = Accessibility;
 			sourceTree = "<group>";
 		};
 		A8FA086D2AEFB19A00FCDCAE /* Main View */ = {
@@ -203,6 +214,7 @@
 				A871C2B22AF2D5960076E0A9 /* NSEventModifierFlags+HotKey.swift in Sources */,
 				A8FA08742AEFD76100FCDCAE /* SelectionViewController.swift in Sources */,
 				A871C2B62AF2D5990076E0A9 /* HotKeysController.swift in Sources */,
+				A871C2B92AF2E1C40076E0A9 /* AccessibilityPermissionsManager.swift in Sources */,
 				A871C2B32AF2D5990076E0A9 /* HotKey.swift in Sources */,
 				A871C2B42AF2D5990076E0A9 /* HotKeyChar.swift in Sources */,
 			);
@@ -340,7 +352,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Test_ScrollScreenshot/Preview Content\"";
 				DEVELOPMENT_TEAM = E8TPSF9L49;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -367,7 +379,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Test_ScrollScreenshot/Preview Content\"";
 				DEVELOPMENT_TEAM = E8TPSF9L49;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";

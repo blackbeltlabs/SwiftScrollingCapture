@@ -9,23 +9,27 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var viewModel = ContentViewModel()
-    @Environment(\.openWindow) var openWindow
+    
     var body: some View {
         VStack {
-            Image(nsImage: viewModel.image ?? NSImage())
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 600, height: 600)
-                .foregroundStyle(.tint)
-                .border(Color.red)
-            Button("Take screenshot") {
-                Task {
-                    await viewModel.takeScreenshot()
-                }
-            }
-            Button("Present selection area") {
-              viewModel.presentSelectionArea()
-            }
+          Image(nsImage: viewModel.image ?? NSImage())
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 600, height: 600)
+            .foregroundStyle(.tint)
+            .border(Color.red)
+          Button("Take screenshot") {
+            Task {
+              await viewModel.takeScreenshot()
+              }
+          }
+          Button("Present selection area") {
+            viewModel.presentSelectionArea()
+          }
+          
+          Button("Request accessibility permissions") {
+            viewModel.requestAccessibilityPressed()
+          }
         }
         .padding()
     }

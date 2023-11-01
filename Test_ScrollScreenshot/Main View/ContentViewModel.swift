@@ -3,6 +3,8 @@ import Cocoa
 
 @MainActor
 class ContentViewModel: ObservableObject {
+  
+  let accessibilityManager = AccessibilityPermissionsManager()
     
   @Published var image: NSImage?
   var hotkey: HotKey?
@@ -31,6 +33,11 @@ class ContentViewModel: ObservableObject {
     hotkey?.keyDownHandler = {
       print("Capture started")
     }
+  }
+  
+  func requestAccessibilityPressed() {
+    guard !accessibilityManager.accesibilityEnabled else { return }
+    accessibilityManager.requestAccessibility()
   }
   
 }
