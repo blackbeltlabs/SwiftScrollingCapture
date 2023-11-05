@@ -10,8 +10,10 @@ class ContentViewModel: ObservableObject {
   var hotkey: HotKey?
   let scroller = ScrollViewScroller()
   
-  var selectionRect: CGRect?
-  var screen: NSScreen?
+  private var selectionRect: CGRect?
+  private var screen: NSScreen?
+  
+  let stitcher = ImagesStitcher()
     
   func takeScreenshot() async {
     do {
@@ -105,6 +107,31 @@ class ContentViewModel: ObservableObject {
   func requestAccessibilityPressed() {
     guard !accessibilityManager.accesibilityEnabled else { return }
     accessibilityManager.requestAccessibility()
+  }
+  
+  func mergeTwoImagesPressed() {
+    let url1 = Bundle.main.url(forResource: "test0", withExtension: "png")!
+    let data1 = try! Data(contentsOf: url1)
+    
+    let url2 = Bundle.main.url(forResource: "test1", withExtension: "png")!
+    let data2 = try! Data(contentsOf: url2)
+    
+    let image1 = NSImage(data: data1)!
+    let image2 = NSImage(data: data2)!
+    
+    
+    let resultImage = try! stitcher.combineTwoImagesVertically(image1: image1, image2: image2)
+    
+    
+    image = resultImage
+    
+    guard let cgImage = resultImage.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return }
+
+    let url = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first!.appendingPathComponent("test.png",
+                                                                                                                  conformingTo: .png)
+    
+    let written = CGImageWriter.writeCGImageAsPng(cgImage, to: url)
+    
   }
   
 }

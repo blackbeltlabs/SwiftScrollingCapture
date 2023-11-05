@@ -30,6 +30,10 @@ struct ContentView: View {
           Button("Request accessibility permissions") {
             viewModel.requestAccessibilityPressed()
           }
+          
+          Button("Test merge two images") {
+            viewModel.mergeTwoImagesPressed()
+          }
         }
         .padding()
     }
