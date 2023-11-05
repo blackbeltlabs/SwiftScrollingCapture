@@ -10,7 +10,7 @@ enum RecordingError: LocalizedError {
 
 class ScreenshotTaker {
     private init() { }
-    class func takeFullScreenScreenshot(_ displayId: CGDirectDisplayID, scale: Int, rect: CGRect) async throws -> CGImage? {
+    class func takeFullScreenScreenshot(_ displayId: CGDirectDisplayID, scale: Int, rect: CGRect) async throws -> CGImage {
         return try await takeFullScreenModern(displayId, scale: scale, cropRect: rect)
 //        guard let img = CGDisplayCreateImage(displayId) else {
 //          return nil

@@ -11,15 +11,14 @@ class SelectionWindowController: NSWindowController, NSWindowDelegate {
       target?.setFrame(frame, display: false)
     }
   
-  func highlightInScreenCenter(size: CGSize = .init(width: 500, height: 500)) {
-    let screenFrame = NSScreen.main!.frame
-    let center = CGPoint(x: screenFrame.width / 2,
-                         y: screenFrame.height / 2)
+  func highlightInScreenCenter(center: CGPoint, size: CGSize = .init(width: 500, height: 500)) -> CGRect {
+   
     
     let frame = CGRect(x: center.x - size.width / 2.0,
                        y: center.y - size.height / 2.0,
                        width: size.width,
                        height: size.height)
     highlight(frame: frame)
+    return frame
   }
 }
