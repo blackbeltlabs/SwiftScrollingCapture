@@ -13,6 +13,7 @@ class ContentViewModel: ObservableObject {
   private var selectionRect: CGRect?
   private var screen: NSScreen?
   
+  
   let stitcher = ImagesStitcher()
     
   func takeScreenshot() async {
@@ -84,6 +85,8 @@ class ContentViewModel: ObservableObject {
     var previous: NSImage?
     var next: NSImage?
     
+    var finalImage: NSImage?
+    
     previous = try await takeScreenshotFromSelectionRect()
     
     print("SCROLLING STARTED")
@@ -98,10 +101,28 @@ class ContentViewModel: ObservableObject {
       if ImagesComparator.compare(image1: prev, image2: next) {
         break
       }
+      if let finImage = finalImage {
+        finalImage = try await stitcher.combineTwoImagesVertically(image1: finImage, image2: next)
+      } else {
+        finalImage = try await stitcher.combineTwoImagesVertically(image1: prev, image2: next)
+      }
+      
       previous = next
+      
+     
       
     }
     print("SCROLLING COMPLETED")
+    
+    if let finalImage {
+      let url = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first!.appendingPathComponent("test_full.png",
+                                                                                                                    conformingTo: .png)
+      
+      let cgImage = finalImage.cgImage(forProposedRect: nil, context: nil, hints: nil)!
+      let written = CGImageWriter.writeCGImageAsPng(cgImage, to: url)
+    }
+    
+    self.image = finalImage
   }
   
   func requestAccessibilityPressed() {
@@ -110,16 +131,10 @@ class ContentViewModel: ObservableObject {
   }
   
   func mergeTwoImagesPressed() {
-    let url1 = Bundle.main.url(forResource: "test0", withExtension: "png")!
-    let data1 = try! Data(contentsOf: url1)
+    let image1 = getImage(with: "test0", resource: "png")
+    let image2 = getImage(with: "test1", resource: "png")
     
-    let url2 = Bundle.main.url(forResource: "test1", withExtension: "png")!
-    let data2 = try! Data(contentsOf: url2)
-    
-    let image1 = NSImage(data: data1)!
-    let image2 = NSImage(data: data2)!
-    
-    
+      
     let resultImage = try! stitcher.combineTwoImagesVertically(image1: image1, image2: image2)
     
     
@@ -134,4 +149,21 @@ class ContentViewModel: ObservableObject {
     
   }
   
+  func getImage(with name: String, resource: String) -> NSImage {
+    let url = Bundle.main.url(forResource: name, withExtension: resource)!
+    let data = try! Data(contentsOf: url)
+    return NSImage(data: data)!
+  }
+  
+
+  func compareTwoImagesPressed() {
+    let comparator = ImagesComparator()
+    let image1 = getImage(with: "test0", resource: "png")
+    let image2 = getImage(with: "test1", resource: "png")
+    
+    let areEqual = ImagesComparator.compare(image1: image1, image2: image2)
+    print("Are equal = \(areEqual)")
+  }
+  
 }
+

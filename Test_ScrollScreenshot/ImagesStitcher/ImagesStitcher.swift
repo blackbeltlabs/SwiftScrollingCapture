@@ -52,6 +52,14 @@ final class ImagesStitcher {
     return NSImage(cgImage: cgImage, size: .zero)
   }
   
+  func combineTwoImagesVertically(image1: NSImage, image2: NSImage) async throws -> NSImage {
+    let task = Task {
+      return try combineTwoImagesVertically(image1: image1, image2: image2)
+    }
+    
+    return try await task.value
+  }
+  
   private func createContext(input: ContextInput) throws -> CreatedContextData {
     
     guard let colorSpace = input.image1.colorSpace ?? NSColorSpace.deviceRGB.cgColorSpace else {
@@ -100,3 +108,5 @@ final class ImagesStitcher {
   
   
 }
+
+extension NSImage: @unchecked Sendable { }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct ContentView: View {
     @StateObject var viewModel = ContentViewModel()
@@ -18,6 +19,7 @@ struct ContentView: View {
             .frame(width: 600, height: 600)
             .foregroundStyle(.tint)
             .border(Color.red)
+       
           Button("Take screenshot") {
             Task {
               await viewModel.takeScreenshot()
@@ -33,6 +35,10 @@ struct ContentView: View {
           
           Button("Test merge two images") {
             viewModel.mergeTwoImagesPressed()
+          }
+        
+          Button("Compare two images") {
+            viewModel.compareTwoImagesPressed()
           }
         }
         .padding()
