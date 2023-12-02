@@ -78,6 +78,19 @@ class ImagesComparator {
     return try pixel(from: pixelsMatrix, at: point)
   }
   
+  func pixelsRow(from nsImage: NSImage, row: Int) throws -> [Pixel] {
+    let pixelsMatrix = try self.pixelsMatrix(nsImage: nsImage)
+    
+    var array: [Pixel] = []
+    
+    for i in 0..<pixelsMatrix.width {
+      let nextPixel = try pixel(from: pixelsMatrix, at: .init(x: i, y: row))
+      array.append(nextPixel)
+    }
+    
+    return array
+  }
+  
   func allPixels(from image: NSImage) throws -> [[Pixel]]  {
     let pixelsMatrix = try self.pixelsMatrix(nsImage: image)
     return getAllPixels(for: pixelsMatrix)

@@ -30,11 +30,17 @@ class ComparePixelsViewModel: ObservableObject {
       
       print(pixel1)
       print(pixel2)
+//      
+//      let allPixels1 = try! imcProc.allPixels(from: image1)
+//      let allPixels2 = try! imcProc.allPixels(from: image2)
       
-      let allPixels1 = try! imcProc.allPixels(from: image1)
-      let allPixels2 = try! imcProc.allPixels(from: image2)
+      let pixelRow1 = try! imcProc.pixelsRow(from: image1, row: 30)
+      
+      let pixelRow2 = try! imcProc.pixelsRow(from: image2, row: 30)
+      
+      print(pixelRow1 == pixelRow2)
 
-      print(allPixels2.description)
+     // print(allPixels2.description)
     }
 
 }
