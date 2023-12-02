@@ -24,11 +24,16 @@
 		A871C2C62AF7DB610076E0A9 /* test0.png in Resources */ = {isa = PBXBuildFile; fileRef = A871C2C42AF7DB610076E0A9 /* test0.png */; };
 		A871C2C72AF7DB610076E0A9 /* test1.png in Resources */ = {isa = PBXBuildFile; fileRef = A871C2C52AF7DB610076E0A9 /* test1.png */; };
 		A871C2C92AF7DE3B0076E0A9 /* CGImageWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A871C2C82AF7DE3B0076E0A9 /* CGImageWriter.swift */; };
+		A8C0A5BB2B1B416600911DD3 /* ComparePixelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C0A5BA2B1B416600911DD3 /* ComparePixelsView.swift */; };
+		A8C0A5BF2B1B4D0500911DD3 /* Rectangle1.png in Resources */ = {isa = PBXBuildFile; fileRef = A8C0A5BD2B1B4D0500911DD3 /* Rectangle1.png */; };
+		A8C0A5C02B1B4D0500911DD3 /* Rectangle2.png in Resources */ = {isa = PBXBuildFile; fileRef = A8C0A5BE2B1B4D0500911DD3 /* Rectangle2.png */; };
+		A8C0A5C22B1B4DA400911DD3 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C0A5C12B1B4DA300911DD3 /* ImageLoader.swift */; };
 		A8CB21C32ADBE4F700AF1C78 /* ScreenshotTaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB21C22ADBE4F700AF1C78 /* ScreenshotTaker.swift */; };
 		A8CB21C52ADBE55A00AF1C78 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB21C42ADBE55A00AF1C78 /* ContentViewModel.swift */; };
 		A8FA08702AEFD62800FCDCAE /* SelectionWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FA086F2AEFD62800FCDCAE /* SelectionWindowController.swift */; };
 		A8FA08722AEFD67000FCDCAE /* SelectionAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FA08712AEFD67000FCDCAE /* SelectionAssembler.swift */; };
 		A8FA08742AEFD76100FCDCAE /* SelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FA08732AEFD76100FCDCAE /* SelectionViewController.swift */; };
+		A8FD4A242B11363600071E00 /* Pixel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD4A232B11363600071E00 /* Pixel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,11 +56,16 @@
 		A871C2C42AF7DB610076E0A9 /* test0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test0.png; sourceTree = "<group>"; };
 		A871C2C52AF7DB610076E0A9 /* test1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test1.png; sourceTree = "<group>"; };
 		A871C2C82AF7DE3B0076E0A9 /* CGImageWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGImageWriter.swift; sourceTree = "<group>"; };
+		A8C0A5BA2B1B416600911DD3 /* ComparePixelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComparePixelsView.swift; sourceTree = "<group>"; };
+		A8C0A5BD2B1B4D0500911DD3 /* Rectangle1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Rectangle1.png; sourceTree = "<group>"; };
+		A8C0A5BE2B1B4D0500911DD3 /* Rectangle2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Rectangle2.png; sourceTree = "<group>"; };
+		A8C0A5C12B1B4DA300911DD3 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
 		A8CB21C22ADBE4F700AF1C78 /* ScreenshotTaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTaker.swift; sourceTree = "<group>"; };
 		A8CB21C42ADBE55A00AF1C78 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		A8FA086F2AEFD62800FCDCAE /* SelectionWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionWindowController.swift; sourceTree = "<group>"; };
 		A8FA08712AEFD67000FCDCAE /* SelectionAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionAssembler.swift; sourceTree = "<group>"; };
 		A8FA08732AEFD76100FCDCAE /* SelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionViewController.swift; sourceTree = "<group>"; };
+		A8FD4A232B11363600071E00 /* Pixel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pixel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +98,8 @@
 		A80BB1E22ADBE433003F06AC /* Test_ScrollScreenshot */ = {
 			isa = PBXGroup;
 			children = (
+				A8C0A5BD2B1B4D0500911DD3 /* Rectangle1.png */,
+				A8C0A5BE2B1B4D0500911DD3 /* Rectangle2.png */,
 				A871C2C42AF7DB610076E0A9 /* test0.png */,
 				A871C2C52AF7DB610076E0A9 /* test1.png */,
 				A871C2C12AF7AC560076E0A9 /* ImagesStitcher */,
@@ -140,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				A871C2BF2AF79C8E0076E0A9 /* ImagesComparator.swift */,
+				A8FD4A232B11363600071E00 /* Pixel.swift */,
 			);
 			path = ImagesComparer;
 			sourceTree = "<group>";
@@ -152,11 +165,21 @@
 			path = ImagesStitcher;
 			sourceTree = "<group>";
 		};
+		A8C0A5BC2B1B41BD00911DD3 /* Compare Pixels */ = {
+			isa = PBXGroup;
+			children = (
+				A8C0A5BA2B1B416600911DD3 /* ComparePixelsView.swift */,
+			);
+			path = "Compare Pixels";
+			sourceTree = "<group>";
+		};
 		A8FA086D2AEFB19A00FCDCAE /* Main View */ = {
 			isa = PBXGroup;
 			children = (
+				A8C0A5BC2B1B41BD00911DD3 /* Compare Pixels */,
 				A8CB21C42ADBE55A00AF1C78 /* ContentViewModel.swift */,
 				A80BB1E52ADBE433003F06AC /* ContentView.swift */,
+				A8C0A5C12B1B4DA300911DD3 /* ImageLoader.swift */,
 			);
 			path = "Main View";
 			sourceTree = "<group>";
@@ -229,7 +252,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8C0A5C02B1B4D0500911DD3 /* Rectangle2.png in Resources */,
 				A80BB1EB2ADBE434003F06AC /* Preview Assets.xcassets in Resources */,
+				A8C0A5BF2B1B4D0500911DD3 /* Rectangle1.png in Resources */,
 				A871C2C72AF7DB610076E0A9 /* test1.png in Resources */,
 				A80BB1E82ADBE434003F06AC /* Assets.xcassets in Resources */,
 				A871C2C62AF7DB610076E0A9 /* test0.png in Resources */,
@@ -248,13 +273,16 @@
 				A8FA08722AEFD67000FCDCAE /* SelectionAssembler.swift in Sources */,
 				A8CB21C32ADBE4F700AF1C78 /* ScreenshotTaker.swift in Sources */,
 				A871C2BD2AF6BF670076E0A9 /* ImageDiff.swift in Sources */,
+				A8C0A5BB2B1B416600911DD3 /* ComparePixelsView.swift in Sources */,
 				A80BB1E62ADBE433003F06AC /* ContentView.swift in Sources */,
 				A8FA08702AEFD62800FCDCAE /* SelectionWindowController.swift in Sources */,
 				A80BB1E42ADBE433003F06AC /* Test_ScrollScreenshotApp.swift in Sources */,
 				A871C2C92AF7DE3B0076E0A9 /* CGImageWriter.swift in Sources */,
 				A871C2B22AF2D5960076E0A9 /* NSEventModifierFlags+HotKey.swift in Sources */,
+				A8FD4A242B11363600071E00 /* Pixel.swift in Sources */,
 				A871C2C32AF7AC740076E0A9 /* ImagesStitcher.swift in Sources */,
 				A8FA08742AEFD76100FCDCAE /* SelectionViewController.swift in Sources */,
+				A8C0A5C22B1B4DA400911DD3 /* ImageLoader.swift in Sources */,
 				A871C2B62AF2D5990076E0A9 /* HotKeysController.swift in Sources */,
 				A871C2B92AF2E1C40076E0A9 /* AccessibilityPermissionsManager.swift in Sources */,
 				A871C2BB2AF3A4FF0076E0A9 /* ScrollViewScroller.swift in Sources */,
