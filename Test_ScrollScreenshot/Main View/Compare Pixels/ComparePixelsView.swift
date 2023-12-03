@@ -5,14 +5,21 @@ class ComparePixelsViewModel: ObservableObject {
     @Published var image1: NSImage?
     @Published var image2: NSImage?
     
+    let imcCrop = ImagesCropper()
     let imcProc = ImagesComparator()
     
     func onAppear() {
         image1 = ImageLoader.getImage(with: "Rectangle1",
                                       resource: "png")
-        image2 = ImageLoader.getImage(with: "Rectangle2",
-                                      resource: "png")
-        readPixels(image1: image1!, image2: image2!)
+        
+        let tmpImage2 = ImageLoader.getImage(with: "Rectangle2",
+                                             resource: "png")
+      
+      /*  image2 = try! imcCrop.crop(tmpImage2,
+                              rectInPixels: .init(x: 0, y: 25, width: 200, height: 25))
+       */
+        
+        image2 = tmpImage2
     }
     
     
@@ -35,7 +42,6 @@ class ComparePixelsViewModel: ObservableObject {
 //      let allPixels2 = try! imcProc.allPixels(from: image2)
       
       let pixelRow1 = try! imcProc.pixelsRow(from: image1, row: 30)
-      
       let pixelRow2 = try! imcProc.pixelsRow(from: image2, row: 30)
       
       print(pixelRow1 == pixelRow2)
