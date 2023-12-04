@@ -15,11 +15,12 @@ class ContentViewModel: ObservableObject {
   
   
   let stitcher = ImagesStitcher()
+  let screenshotTaker = ScreenshotTaker()
     
   func takeScreenshot() async {
     do {
       guard let screen, let selectionRect else { return }
-      let cgImage = try await ScreenshotTaker.takeFullScreenScreenshot(screen.displayID,
+      let cgImage = try await ScreenshotTaker.takeScreenshot(screen.displayID,
                                                                        scale: Int(screen.backingScaleFactor),
                                                                        rect: selectionRect.insetBy(dx: 2, dy: 2))
             
@@ -39,9 +40,9 @@ class ContentViewModel: ObservableObject {
   
   func takeScreenshotFromSelectionRect() async throws -> NSImage {
     guard let screen, let selectionRect else { fatalError() }
-    let cgImage = try await ScreenshotTaker.takeFullScreenScreenshot(screen.displayID,
-                                                                     scale: Int(screen.backingScaleFactor),
-                                                                     rect: selectionRect.insetBy(dx: 2, dy: 2))
+    let cgImage = try await ScreenshotTaker.takeScreenshot(screen.displayID,
+                                                           scale: Int(screen.backingScaleFactor),
+                                                           rect: selectionRect.insetBy(dx: 2, dy: 2))
     return NSImage(cgImage: cgImage, size: .zero)
   }
   
@@ -62,7 +63,15 @@ class ContentViewModel: ObservableObject {
     hotkey = HotKey(keyCombo: .init(key: .return, modifiers: .init()))
     hotkey?.keyDownHandler = {
       Task {
-        try await self.scrollToBottom(from: center)
+          
+          guard let screen = self.screen, let selectionRect = self.selectionRect else { fatalError() }
+          let cgImage = try await ScreenshotTaker.takeScreenshot(screen.displayID,
+                                                                 scale: Int(screen.backingScaleFactor),
+                                                                 rect: selectionRect.insetBy(dx: 5, dy: 5))
+       //try await self.scrollToBottom(from: center)
+          try await self.screenshotTaker.takeAndSaveScreenshot(screen.displayID,
+                                                          scale: Int(screen.backingScaleFactor),
+                                                          rect: selectionRect.insetBy(dx: 5, dy: 5))
       }
       print("Capture started")
     }

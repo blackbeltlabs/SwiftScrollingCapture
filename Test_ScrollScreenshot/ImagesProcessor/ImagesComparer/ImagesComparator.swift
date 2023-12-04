@@ -39,11 +39,7 @@ class ImagesComparator {
 
   // https://gist.github.com/larsaugustin/af414f3637885f56c837b88c3fea1e6b
   func pixelsMatrix(nsImage: NSImage) throws -> PixelsMatrix {
-    
-    var returnPixels = [Pixel]()
-
-    let date = Date()
-    
+      
     guard let cgImage = nsImage.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
       throw ContextError.cantGetCGImage
     }
@@ -80,15 +76,44 @@ class ImagesComparator {
   
   func pixelsRow(from nsImage: NSImage, row: Int) throws -> [Pixel] {
     let pixelsMatrix = try self.pixelsMatrix(nsImage: nsImage)
+    return try pixelsRow(from: pixelsMatrix, row: row)
     
+  }
+  
+  func pixelsRow(from matrix: PixelsMatrix, row: Int) throws -> [Pixel] {
     var array: [Pixel] = []
     
-    for i in 0..<pixelsMatrix.width {
-      let nextPixel = try pixel(from: pixelsMatrix, at: .init(x: i, y: row))
+    for i in 0..<matrix.width {
+      let nextPixel = try pixel(from: matrix, at: .init(x: i, y: row))
       array.append(nextPixel)
     }
     
     return array
+  }
+  
+  func findRow( _ rowToFind: [Pixel], in image: NSImage) throws -> Int?  {
+    let pixelsMatrix = try self.pixelsMatrix(nsImage: image)
+    return try findRow(rowToFind, in: pixelsMatrix)
+  }
+  
+  func findRow(_ rowToFind: [Pixel], in matrix: PixelsMatrix) throws -> Int? {
+    guard rowToFind.count == matrix.width else {
+      return nil
+    }
+    
+    for i in 0..<matrix.height {
+      let nextRow = try pixelsRow(from: matrix, row: i)
+      if nextRow == rowToFind {
+        return i
+      }
+    }
+    
+    return nil
+  }
+    
+  func latestRow(for nsImage: NSImage) throws -> [Pixel] {
+    let pixelsMatrix = try self.pixelsMatrix(nsImage: nsImage)
+    return try pixelsRow(from: pixelsMatrix, row: pixelsMatrix.height - 1)
   }
   
   func allPixels(from image: NSImage) throws -> [[Pixel]]  {
@@ -243,5 +268,15 @@ extension Array where Element == [Pixel] {
     }
     
     return fullString
+  }
+}
+
+
+extension NSImage {
+  var sizeInPixels: CGSize {
+    let cgImage = self.cgImage(forProposedRect: nil, context: nil, hints: nil)!
+    
+    return .init(width: cgImage.width,
+                 height: cgImage.width)
   }
 }
