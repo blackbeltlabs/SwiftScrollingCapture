@@ -91,17 +91,23 @@ class ImagesComparator {
     return array
   }
   
-  func findRow( _ rowToFind: [Pixel], in image: NSImage) throws -> Int?  {
+  func findRow( _ rowToFind: [Pixel], in image: NSImage, startFromEnd: Bool = false) throws -> Int?  {
     let pixelsMatrix = try self.pixelsMatrix(nsImage: image)
-    return try findRow(rowToFind, in: pixelsMatrix)
+    return try findRow(rowToFind, in: pixelsMatrix, startFromEnd: startFromEnd)
   }
   
-  func findRow(_ rowToFind: [Pixel], in matrix: PixelsMatrix) throws -> Int? {
+  func findRow(_ rowToFind: [Pixel], in matrix: PixelsMatrix, startFromEnd: Bool = false) throws -> Int? {
     guard rowToFind.count == matrix.width else {
       return nil
     }
     
-    for i in 0..<matrix.height {
+    let start: Int = startFromEnd ? matrix.height - 1 : 0
+    let end: Int = startFromEnd ? -1 : matrix.height
+    
+    let step: Int = startFromEnd ? -1 : 1
+    
+    for i in stride(from: start, to: end, by: step) {
+          
       let nextRow = try pixelsRow(from: matrix, row: i)
       if nextRow == rowToFind {
         return i
@@ -114,6 +120,11 @@ class ImagesComparator {
   func latestRow(for nsImage: NSImage) throws -> [Pixel] {
     let pixelsMatrix = try self.pixelsMatrix(nsImage: nsImage)
     return try pixelsRow(from: pixelsMatrix, row: pixelsMatrix.height - 1)
+  }
+  
+  func firstRow(for nsImage: NSImage) throws -> [Pixel] {
+    let pixelsMatrix = try self.pixelsMatrix(nsImage: nsImage)
+    return try pixelsRow(from: pixelsMatrix, row: 0)
   }
   
   func allPixels(from image: NSImage) throws -> [[Pixel]]  {

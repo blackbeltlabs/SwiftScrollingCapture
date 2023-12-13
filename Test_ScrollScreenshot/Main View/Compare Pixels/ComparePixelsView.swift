@@ -23,12 +23,14 @@ class ComparePixelsViewModel: ObservableObject {
      */
       
       image2 = tmpImage2
+//    
+//      readPixels(image1: image1!, image2: image2!)
     
-      readPixels(image1: image1!, image2: image2!)
+    combineTwoImagesFirstRowApproach(image1: image1!, image2: image2!)
   }
     
     
-    func readPixels(image1: NSImage, image2: NSImage) {
+    func combineTwoImagesLatestRowApproach(image1: NSImage, image2: NSImage) {
       let date1 = Date()
     
     
@@ -64,10 +66,11 @@ class ComparePixelsViewModel: ObservableObject {
       
       let cutHeight = size.height - CGFloat(cutYPosition)
       
-      let croppedImage = try! imcCrop.crop(image2, rectInPixels: .init(x: 0,
-                                          y: CGFloat(cutYPosition),
-                                               width: size.width,
-                                               height: cutHeight))
+      let croppedImage = try! imcCrop.crop(image2,
+                                           rectInPixels: .init(x: 0,
+                                                               y: CGFloat(cutYPosition),
+                                                               width: size.width,
+                                                               height: cutHeight))
   
       image3 = croppedImage
       
@@ -80,9 +83,39 @@ class ComparePixelsViewModel: ObservableObject {
 
       
       print("FOUND row = \(foundRow)")
-
-     // print(allPixels2.description)
     }
+  
+  
+  func combineTwoImagesFirstRowApproach(image1: NSImage, image2: NSImage) {
+    // 1. Get the first row from the image 2
+    let pixelRow1 = try! imcProc.firstRow(for: image2)
+    
+    // 2. try to found the same row in the image 1
+    guard let foundRow = try! imcProc.findRow(pixelRow1, in: image1, startFromEnd: true) else {
+      print("Not found")
+      return
+    }
+    
+    // 3.
+    let cutYPosition = Int(image1.sizeInPixels.height) - foundRow + 1
+    
+    let size = image2.sizeInPixels
+    
+    let cutHeight = size.height - CGFloat(cutYPosition)
+    
+    // 4.
+    
+    let croppedImage = try! imcCrop.crop(image2,
+                                         rectInPixels: .init(x: 0,
+                                        y: CGFloat(cutYPosition),
+                                                             width: size.width,
+                                             height: cutHeight))
+    
+    // 4. Stitch the main image with the previous one
+    let combinedImage = try! imcStc.combineTwoImagesVertically(image1: image1, image2: croppedImage)
+    
+    image3 = combinedImage
+  }
 
 }
 
