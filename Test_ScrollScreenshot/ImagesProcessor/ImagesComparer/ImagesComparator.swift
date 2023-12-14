@@ -288,6 +288,6 @@ extension NSImage {
     let cgImage = self.cgImage(forProposedRect: nil, context: nil, hints: nil)!
     
     return .init(width: cgImage.width,
-                 height: cgImage.width)
+                 height: cgImage.height)
   }
 }

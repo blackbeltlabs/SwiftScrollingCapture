@@ -33,6 +33,7 @@
 		A8C0A5CD2B1CFB0600911DD3 /* scroll1.png in Resources */ = {isa = PBXBuildFile; fileRef = A8C0A5CC2B1CFB0600911DD3 /* scroll1.png */; };
 		A8CB21C32ADBE4F700AF1C78 /* ScreenshotTaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB21C22ADBE4F700AF1C78 /* ScreenshotTaker.swift */; };
 		A8CB21C52ADBE55A00AF1C78 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB21C42ADBE55A00AF1C78 /* ContentViewModel.swift */; };
+		A8E33A9B2B2AFFB2005B904D /* ComparePixelsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E33A9A2B2AFFB2005B904D /* ComparePixelsViewModel.swift */; };
 		A8FA08702AEFD62800FCDCAE /* SelectionWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FA086F2AEFD62800FCDCAE /* SelectionWindowController.swift */; };
 		A8FA08722AEFD67000FCDCAE /* SelectionAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FA08712AEFD67000FCDCAE /* SelectionAssembler.swift */; };
 		A8FA08742AEFD76100FCDCAE /* SelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FA08732AEFD76100FCDCAE /* SelectionViewController.swift */; };
@@ -68,6 +69,7 @@
 		A8C0A5CC2B1CFB0600911DD3 /* scroll1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = scroll1.png; sourceTree = "<group>"; };
 		A8CB21C22ADBE4F700AF1C78 /* ScreenshotTaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTaker.swift; sourceTree = "<group>"; };
 		A8CB21C42ADBE55A00AF1C78 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		A8E33A9A2B2AFFB2005B904D /* ComparePixelsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComparePixelsViewModel.swift; sourceTree = "<group>"; };
 		A8FA086F2AEFD62800FCDCAE /* SelectionWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionWindowController.swift; sourceTree = "<group>"; };
 		A8FA08712AEFD67000FCDCAE /* SelectionAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionAssembler.swift; sourceTree = "<group>"; };
 		A8FA08732AEFD76100FCDCAE /* SelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionViewController.swift; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 			isa = PBXGroup;
 			children = (
 				A8C0A5BA2B1B416600911DD3 /* ComparePixelsView.swift */,
+				A8E33A9A2B2AFFB2005B904D /* ComparePixelsViewModel.swift */,
 			);
 			path = "Compare Pixels";
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 				A8FA08702AEFD62800FCDCAE /* SelectionWindowController.swift in Sources */,
 				A80BB1E42ADBE433003F06AC /* Test_ScrollScreenshotApp.swift in Sources */,
 				A871C2C92AF7DE3B0076E0A9 /* CGImageWriter.swift in Sources */,
+				A8E33A9B2B2AFFB2005B904D /* ComparePixelsViewModel.swift in Sources */,
 				A871C2B22AF2D5960076E0A9 /* NSEventModifierFlags+HotKey.swift in Sources */,
 				A8FD4A242B11363600071E00 /* Pixel.swift in Sources */,
 				A871C2C32AF7AC740076E0A9 /* ImagesStitcher.swift in Sources */,

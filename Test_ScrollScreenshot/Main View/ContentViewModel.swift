@@ -42,7 +42,7 @@ class ContentViewModel: ObservableObject {
     guard let screen, let selectionRect else { fatalError() }
     let cgImage = try await ScreenshotTaker.takeScreenshot(screen.displayID,
                                                            scale: Int(screen.backingScaleFactor),
-                                                           rect: selectionRect.insetBy(dx: 2, dy: 2))
+                                                           rect: selectionRect.insetBy(dx: 5, dy: 5))
     return NSImage(cgImage: cgImage, size: .zero)
   }
   
@@ -63,7 +63,7 @@ class ContentViewModel: ObservableObject {
     hotkey = HotKey(keyCombo: .init(key: .return, modifiers: .init()))
     hotkey?.keyDownHandler = {
       Task {
-          
+          /*
           guard let screen = self.screen, let selectionRect = self.selectionRect else { fatalError() }
           let cgImage = try await ScreenshotTaker.takeScreenshot(screen.displayID,
                                                                  scale: Int(screen.backingScaleFactor),
@@ -72,6 +72,9 @@ class ContentViewModel: ObservableObject {
           try await self.screenshotTaker.takeAndSaveScreenshot(screen.displayID,
                                                           scale: Int(screen.backingScaleFactor),
                                                           rect: selectionRect.insetBy(dx: 5, dy: 5))
+           */
+        
+        try await self.scrollToBottom(from: center)
       }
       print("Capture started")
     }
