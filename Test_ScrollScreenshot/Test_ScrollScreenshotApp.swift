@@ -11,7 +11,8 @@ import SwiftUI
 struct Test_ScrollScreenshotApp: App {
     var body: some Scene {
         WindowGroup {
-          ContentView(viewModel: ContentViewModel())
+          ComparePixelsView()
+        //  ContentView(viewModel: ContentViewModel())
         }
     }
 }

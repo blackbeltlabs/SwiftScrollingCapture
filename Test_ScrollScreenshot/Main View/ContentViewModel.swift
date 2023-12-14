@@ -168,7 +168,7 @@ class ContentViewModel: ObservableObject {
     let image1 = getImage(with: "test0", resource: "png")
     let image2 = getImage(with: "test1", resource: "png")
     
-    let areEqual = comparator.compareByPixels(image1: image1, image2: image2)
+    let areEqual = try! comparator.compareByPixels(image1: image1, image2: image2)
     
     print("Are equal = \(areEqual)")
   }

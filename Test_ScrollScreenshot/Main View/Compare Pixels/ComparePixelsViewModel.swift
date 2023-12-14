@@ -28,7 +28,9 @@ class ComparePixelsViewModel: ObservableObject {
 //
 //      readPixels(image1: image1!, image2: image2!)
     
-    combineTwoImagesFirstRowApproach(image1: image1!, image2: image2!)
+  //  combineTwoImagesFirstRowApproach(image1: image1!, image2: image2!)
+    
+    compareTwoImages(image1: image1!, image2: image2!)
   }
     
     
@@ -119,6 +121,15 @@ class ComparePixelsViewModel: ObservableObject {
     let combinedImage = try! imcStc.combineTwoImagesVertically(image1: image1, image2: croppedImage)
     
     image3 = combinedImage
+  }
+  
+  
+  func compareTwoImages(image1: NSImage, image2: NSImage) -> Bool {
+    let comparationResult = try! imcProc.compareByPixels(image1: image1, image2: image2)
+    
+    print("Comparation Result = \(comparationResult)")
+    
+    return true
   }
 
 }

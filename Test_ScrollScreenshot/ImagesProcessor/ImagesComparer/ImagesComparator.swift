@@ -15,6 +15,10 @@ struct PixelsMatrix {
   let width: Int
   let height: Int
   let pixelsBuffer: UnsafePointer<UInt8>
+  
+  // DATA must be included a good approach is described here
+  // https://stackoverflow.com/questions/58452487/swift-memory-address-issues-with-cfdatagetbyteptr
+  let data: CFData
 }
 
 class ImagesComparator {
@@ -47,11 +51,13 @@ class ImagesComparator {
       throw ContextError.cantGetCGImageDataProvider
     }
     
-    let buffer: UnsafePointer<UInt8> = CFDataGetBytePtr(dataProvider.data)
+    let data = dataProvider.data
+    let buffer: UnsafePointer<UInt8> = CFDataGetBytePtr(data)
     
     return .init(width: cgImage.width,
                  height: cgImage.height,
-                 pixelsBuffer: buffer)
+                 pixelsBuffer: buffer, 
+                 data: data!)
   }
   
   private func pixel(from matrix: PixelsMatrix, at point: PixelPoint) throws -> Pixel {
@@ -200,17 +206,23 @@ class ImagesComparator {
     return pixelsDict
   }
   
-  func compareByPixels(image1: NSImage, image2: NSImage) -> Bool {
-    let time = Date().timeIntervalSinceReferenceDate
-    do {
-      let context = try drawImageIntoContext(nsImage: image1)
-      let allColors = allColors(bitmap: context.cgContext)
-    } catch let error {
-      print(error.localizedDescription)
+  func compareByPixels(image1: NSImage, image2: NSImage) throws -> Bool {
+    let matrix1 = try pixelsMatrix(nsImage: image1)
+    let matrix2 = try pixelsMatrix(nsImage: image2)
+    
+    guard matrix1.width == matrix2.width, matrix1.height == matrix2.height else {
+      return false
     }
-  
-    let time2 = Date().timeIntervalSinceReferenceDate
-    print("Diff = \(time2 - time)")
+    
+    // compare rows one by one
+    for i in 0..<matrix1.height {
+      let nextMatrix1Row = try pixelsRow(from: matrix1, row: i)
+      let nextMatrix2Row = try pixelsRow(from: matrix2, row: i)
+      
+      guard nextMatrix1Row == nextMatrix2Row else {
+        return false
+      }
+    }
     return true
   }
   
@@ -248,25 +260,25 @@ class ImagesComparator {
 }
 
 
-// MARK: - CGContext approach (deprecated)
-extension ImagesComparator {
-  func pixelsMatrix(bitmap: CGContext) throws -> PixelsMatrix {
-    guard let pixelData = bitmap.data else {
-      throw ContextError.cantGetPixelsMatrix
-    }
-    
-    let width = bitmap.width
-    let height = bitmap.height
-    
-    let pixelsBuffer = pixelData.bindMemory(to: UInt8.self,
-                                            capacity: width * height)
-    
-    return .init(width: width,
-                 height: height,
-                 pixelsBuffer: pixelsBuffer)
-  }
-  
-}
+//// MARK: - CGContext approach (deprecated)
+//extension ImagesComparator {
+//  func pixelsMatrix(bitmap: CGContext) throws -> PixelsMatrix {
+//    guard let pixelData = bitmap.data else {
+//      throw ContextError.cantGetPixelsMatrix
+//    }
+//    
+//    let width = bitmap.width
+//    let height = bitmap.height
+//    
+//    let pixelsBuffer = pixelData.bindMemory(to: UInt8.self,
+//                                            capacity: width * height)
+//    
+//    return .init(width: width,
+//                 height: height,
+//                 pixelsBuffer: pixelsBuffer)
+//  }
+//  
+//}
 
 
 extension Array where Element == [Pixel] {
