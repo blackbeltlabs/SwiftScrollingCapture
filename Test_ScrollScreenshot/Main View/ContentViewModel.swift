@@ -92,6 +92,7 @@ class ContentViewModel: ObservableObject {
   
   @MainActor
   func scrollToBottom(from point: CGPoint) async throws {
+    let imc = ImagesComparator()
     var previous: NSImage?
     var next: NSImage?
     
@@ -108,13 +109,14 @@ class ContentViewModel: ObservableObject {
       guard let prev = previous, let next else {
         fatalError()
       }
-      if ImagesComparator.compare(image1: prev, image2: next) {
+      if try imc.compareByPixels(image1: prev, image2: next) {
         break
       }
+      
       if let finImage = finalImage {
-        finalImage = try await stitcher.combineTwoImagesVertically(image1: finImage, image2: next)
+        finalImage = try stitcher.combineTwoImagesFirstRowApproach(image1: finImage, image2: next)
       } else {
-        finalImage = try await stitcher.combineTwoImagesVertically(image1: prev, image2: next)
+        finalImage = try stitcher.combineTwoImagesFirstRowApproach(image1: prev, image2: next)
       }
       
       previous = next

@@ -14,10 +14,10 @@ class ComparePixelsViewModel: ObservableObject {
   
   // MARK: - Actions
   func onAppear() {
-      image1 = ImageLoader.getImage(with: "Rectangle1",
+      image1 = ImageLoader.getImage(with: "scroll0",
                                     resource: "png")
       
-      let tmpImage2 = ImageLoader.getImage(with: "Rectangle2",
+      let tmpImage2 = ImageLoader.getImage(with: "scroll1",
                                            resource: "png")
     
     /*  image2 = try! imcCrop.crop(tmpImage2,
@@ -28,9 +28,9 @@ class ComparePixelsViewModel: ObservableObject {
 //
 //      readPixels(image1: image1!, image2: image2!)
     
-  //  combineTwoImagesFirstRowApproach(image1: image1!, image2: image2!)
+    combineTwoImagesFirstRowApproach(image1: image1!, image2: image2!)
     
-    compareTwoImages(image1: image1!, image2: image2!)
+   // compareTwoImages(image1: image1!, image2: image2!)
   }
     
     
