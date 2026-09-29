@@ -19,6 +19,11 @@ struct ContentView: View {
             .frame(width: 600, height: 600)
             .foregroundStyle(.tint)
             .border(Color.red)
+
+          Text(viewModel.status)
+            .font(.caption)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: 600)
        
           Button("Take screenshot") {
             Task {
@@ -39,6 +44,10 @@ struct ContentView: View {
         
           Button("Compare two images") {
             viewModel.compareTwoImagesPressed()
+          }
+
+          Button("Offline overlap check (scroll0 + scroll1)") {
+            viewModel.offlineCheckPressed()
           }
         }
         .padding()
