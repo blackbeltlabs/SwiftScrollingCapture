@@ -75,6 +75,16 @@ class ContentViewModel: ObservableObject {
     status = "Put a scrollable view under the green frame and press Return. Press Esc to stop."
   }
 
+  func compare(image1: NSImage, image2: NSImage) -> Bool {
+    guard let tiff1 = image1.tiffRepresentation,
+          let tiff2 = image2.tiffRepresentation else {
+      print("Can't instantiate tiff instances")
+      return false
+    }
+
+    return tiff1 == tiff2
+  }
+
   func startScrollCapture() {
     guard captureTask == nil, let screen, let selectionRect else { return }
 
