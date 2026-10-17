@@ -7,9 +7,13 @@ class ContentViewModel: ObservableObject {
   let accessibilityManager = AccessibilityPermissionsManager()
     
   @Published var image: NSImage?
-  var hotkey: HotKey?
-  let scroller = ScrollViewScroller()
-  
+  @Published var status = ""
+
+  private var startHotKey: HotKey?
+  private var cancelHotKey: HotKey?
+  private var selectionWindowController: SelectionWindowController?
+  private var captureTask: Task<Void, Never>?
+
   private var selectionRect: CGRect?
   private var screen: NSScreen?
   
@@ -47,93 +51,140 @@ class ContentViewModel: ObservableObject {
   }
   
   func presentSelectionArea() {
+    guard captureTask == nil, let screen = NSScreen.main else { return }
+
+    selectionWindowController?.close()
     let wc = SelectionAssembler.assemble()
     wc.showWindow(self)
-    
-    let screen = NSScreen.main!
-    let screenFrame = screen.frame
-    let center = CGPoint(x: screenFrame.width / 2,
-                         y: screenFrame.height / 2)
-    
+
+    let center = CGPoint(x: screen.frame.midX,
+                         y: screen.frame.midY)
+
     self.screen = screen
     selectionRect = wc.highlightInScreenCenter(center: center)
-    
-    
-    
-    hotkey = HotKey(keyCombo: .init(key: .return, modifiers: .init()))
-    hotkey?.keyDownHandler = {
-      Task {
-          /*
-          guard let screen = self.screen, let selectionRect = self.selectionRect else { fatalError() }
-          let cgImage = try await ScreenshotTaker.takeScreenshot(screen.displayID,
-                                                                 scale: Int(screen.backingScaleFactor),
-                                                                 rect: selectionRect.insetBy(dx: 5, dy: 5))
-       //try await self.scrollToBottom(from: center)
-          try await self.screenshotTaker.takeAndSaveScreenshot(screen.displayID,
-                                                          scale: Int(screen.backingScaleFactor),
-                                                          rect: selectionRect.insetBy(dx: 5, dy: 5))
-           */
-        
-        try await self.scrollToBottom(from: center)
+    selectionWindowController = wc
+
+    startHotKey = HotKey(keyCombo: .init(key: .return, modifiers: .init()))
+    startHotKey?.keyDownHandler = { [weak self] in
+      guard let self else { return }
+      Task { @MainActor in
+        self.startScrollCapture()
       }
-      print("Capture started")
     }
+
+    status = "Put a scrollable view under the green frame and press Return. Press Esc to stop."
   }
-  
+
   func compare(image1: NSImage, image2: NSImage) -> Bool {
     guard let tiff1 = image1.tiffRepresentation,
           let tiff2 = image2.tiffRepresentation else {
       print("Can't instantiate tiff instances")
       return false
     }
-    
+
     return tiff1 == tiff2
   }
-  
-  @MainActor
-  func scrollToBottom(from point: CGPoint) async throws {
-    let imc = ImagesComparator()
-    var previous: NSImage?
-    var next: NSImage?
-    
-    var finalImage: NSImage?
-    
-    previous = try await takeScreenshotFromSelectionRect()
-    
-    print("SCROLLING STARTED")
-    
-    while (true) {
-      self.scroller.scrollMouse(onPoint: point, xLines: 0, yLines: -5)
-      
-      next = try await takeScreenshotFromSelectionRect()
-      guard let prev = previous, let next else {
-        fatalError()
-      }
-      if try imc.compareByPixels(image1: prev, image2: next) {
-        break
-      }
-      
-      if let finImage = finalImage {
-        finalImage = try stitcher.combineTwoImagesFirstRowApproach(image1: finImage, image2: next)
-      } else {
-        finalImage = try stitcher.combineTwoImagesFirstRowApproach(image1: prev, image2: next)
-      }
-      
-      previous = next
+
+  func startScrollCapture() {
+    guard captureTask == nil, let screen, let selectionRect else { return }
+
+    guard accessibilityManager.accesibilityEnabled else {
+      status = "Accessibility permission is needed to scroll other apps. Grant it and press Return again."
+      accessibilityManager.requestAccessibility()
+      return
     }
-    print("SCROLLING COMPLETED")
-    
-    if let finalImage {
-      let url = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first!.appendingPathComponent("test_full.png",
-                                                                                                                    conformingTo: .png)
-      
-      let cgImage = finalImage.cgImage(forProposedRect: nil, context: nil, hints: nil)!
-      let written = CGImageWriter.writeCGImageAsPng(cgImage, to: url)
+
+    // Stop taking Return away from other apps, Esc stops the capture instead.
+    startHotKey = nil
+    cancelHotKey = HotKey(keyCombo: .init(key: .escape, modifiers: .init()))
+    cancelHotKey?.keyDownHandler = { [weak self] in
+      guard let self else { return }
+      Task { @MainActor in
+        self.captureTask?.cancel()
+      }
     }
-    
-    self.image = finalImage
+
+    // The frame's border is drawn inside the selection rect.
+    let target = CaptureTarget(screen: screen, rectInScreenCoordinates: selectionRect.insetBy(dx: 3, dy: 3))
+    let session = ScrollCaptureSession(target: target)
+
+    // Our windows are left out of the screenshots, but scroll events would still go to them
+    // if they were under the cursor, so hide the app while capturing.
+    NSApp.hide(nil)
+    status = "Capturing..."
+
+    captureTask = Task {
+      do {
+        let result = try await session.run()
+        let url = saveToDesktop(result.image, fileName: "scroll_capture.png")
+        image = NSImage(cgImage: result.image, size: .zero)
+        status = "Done: \(result.stopReason), \(result.steps) steps, \(result.image.width)x\(result.image.height) px. Saved to \(url?.path ?? "nowhere (saving failed)")"
+        // Keep the two frames that did not match, to see what changed between them.
+        if let frames = result.lostOverlapFrames {
+          let previousURL = saveToDesktop(frames.previous, fileName: "scroll_capture_lost_previous.png")
+          let nextURL = saveToDesktop(frames.next, fileName: "scroll_capture_lost_next.png")
+          status += previousURL != nil && nextURL != nil
+            ? ". The two unmatched frames are saved next to it as scroll_capture_lost_*.png"
+            : ". Saving the two unmatched frames failed"
+        }
+      } catch is CancellationError {
+        // Esc before the first frame was captured: nothing to save.
+        status = "Cancelled before the first frame."
+      } catch {
+        status = "Capture failed: \(error.localizedDescription)"
+      }
+      finishScrollCapture()
+    }
   }
-  
+
+  private func finishScrollCapture() {
+    cancelHotKey = nil
+    captureTask = nil
+    selectionWindowController?.close()
+    selectionWindowController = nil
+    NSApp.unhide(nil)
+  }
+
+  private func saveToDesktop(_ cgImage: CGImage, fileName: String) -> URL? {
+    guard let desktop = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first else { return nil }
+    let url = desktop.appendingPathComponent(fileName, conformingTo: .png)
+    return CGImageWriter.writeCGImageAsPng(cgImage, to: url) ? url : nil
+  }
+
+  /// Runs the overlap search and stitching on the bundled scroll0.png / scroll1.png, no screen capture needed.
+  /// These two images were captured with the mouse cursor visible, so a small block differs inside the overlap,
+  /// which is within the default tolerance.
+  func offlineCheckPressed() {
+    let expectedOffset = 560
+
+    do {
+      guard let cgImage1 = getImage(with: "scroll0", resource: "png").cgImage(forProposedRect: nil, context: nil, hints: nil),
+            let cgImage2 = getImage(with: "scroll1", resource: "png").cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+        status = "Offline check: can't load the test images"
+        return
+      }
+
+      let frame1 = try FrameBuffer(cgImage: cgImage1)
+      let frame2 = try FrameBuffer(cgImage: cgImage2)
+
+      let result = OverlapFinder().findOverlap(previous: frame1.rows, next: frame2.rows)
+      guard case .overlap(let overlap) = result else {
+        status = "Offline check FAILED: \(result)"
+        return
+      }
+
+      var composer = StripComposer(firstFrame: frame1)
+      composer.append(frame2, overlap: overlap)
+      let stitched = try composer.makeImage()
+      image = NSImage(cgImage: stitched, size: .zero)
+
+      let verdict = overlap.offset == expectedOffset ? "OK" : "FAILED"
+      status = "Offline check \(verdict): offset \(overlap.offset) px (expected \(expectedOffset)), result height \(stitched.height) px (expected \(frame1.height + expectedOffset))"
+    } catch {
+      status = "Offline check failed: \(error.localizedDescription)"
+    }
+  }
+
   func requestAccessibilityPressed() {
     guard !accessibilityManager.accesibilityEnabled else { return }
     accessibilityManager.requestAccessibility()
