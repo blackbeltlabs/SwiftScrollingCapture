@@ -101,13 +101,25 @@ struct OverlapFinder {
     }
 
     for sticky in uniqueCandidates {
-      if let offset = bestOffset(previous: previous,
-                                 next: next,
-                                 regionStart: sticky.top,
-                                 regionHeight: height - sticky.top - sticky.bottom,
-                                 expectedOffset: expectedOffset) {
-        return overlap(sticky, offset: offset)
+      let regionHeight = height - sticky.top - sticky.bottom
+      guard let best = bestOffset(previous: previous,
+                                  next: next,
+                                  regionStart: sticky.top,
+                                  regionHeight: regionHeight,
+                                  expectedOffset: expectedOffset) else {
+        continue
       }
+
+      // If the region is (almost) the same without any shift, and that explains more non-blank rows than the
+      // best offset does, nothing scrolled and only a small dynamic part changed. Otherwise, at the end of a page
+      // with a blinking caret, a short chance match (repeated list rows) is taken for a scroll and the capture
+      // never stops. Blank rows are not counted: on a mostly blank page they stay in place after a real scroll too.
+      let inPlace = rowsInPlace(previous: previous, next: next, regionStart: sticky.top, regionHeight: regionHeight)
+      if Double(inPlace.total) >= Double(regionHeight) * minimumMatchRatio, inPlace.distinct > best.distinctMatches {
+        return .identical
+      }
+
+      return overlap(sticky, offset: best.offset)
     }
 
     // 3. No movement proven. If almost everything is still in place, only a small dynamic part changed
@@ -138,14 +150,14 @@ struct OverlapFinder {
                           next: [RowSignature],
                           regionStart: Int,
                           regionHeight: Int,
-                          expectedOffset: Int?) -> Int? {
+                          expectedOffset: Int?) -> (offset: Int, distinctMatches: Int)? {
     guard regionHeight > minimumOverlapRows else {
       return nil
     }
 
     // Scored by the number of matching rows, so a large overlap with a few dynamic rows beats a small
     // overlap that matches perfectly by chance (e.g. repeated table rows).
-    var best: (offset: Int, matchedRows: Int)?
+    var best: (offset: Int, matchedRows: Int, distinctMatches: Int)?
 
     for offset in 1...(regionHeight - minimumOverlapRows) {
       let overlapRows = regionHeight - offset
@@ -162,18 +174,36 @@ struct OverlapFinder {
 
       if let current = best {
         if matchedRows > current.matchedRows {
-          best = (offset, matchedRows)
+          best = (offset, matchedRows, comparison.distinctMatches)
         } else if matchedRows == current.matchedRows, let expectedOffset,
                   abs(offset - expectedOffset) < abs(current.offset - expectedOffset) {
           // Several offsets can match equally well: prefer the one closest to how far we asked to scroll.
-          best = (offset, matchedRows)
+          best = (offset, matchedRows, comparison.distinctMatches)
         }
       } else {
-        best = (offset, matchedRows)
+        best = (offset, matchedRows, comparison.distinctMatches)
       }
     }
 
-    return best?.offset
+    return best.map { ($0.offset, $0.distinctMatches) }
+  }
+
+  /// Rows of the region that are equal in both frames without any shift, and how many of them are not blank.
+  private func rowsInPlace(previous: [RowSignature],
+                           next: [RowSignature],
+                           regionStart: Int,
+                           regionHeight: Int) -> (total: Int, distinct: Int) {
+    var total = 0
+    var distinct = 0
+
+    for row in regionStart..<(regionStart + regionHeight) where previous[row] == next[row] {
+      total += 1
+      if !previous[row].isUniform {
+        distinct += 1
+      }
+    }
+
+    return (total, distinct)
   }
 
   private func isConsistent(previous: [RowSignature],

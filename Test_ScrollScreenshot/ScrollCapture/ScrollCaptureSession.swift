@@ -9,6 +9,9 @@ final class ScrollCaptureSession {
   struct Configuration {
     /// Scroll distance as a share of the scrolling area height. Smaller = more overlap = safer, but more steps.
     var scrollStepFraction: Double = 0.5
+    /// Same for the first step, as a share of the whole frame: sticky parts are not known yet, and if they take
+    /// a big part of the frame a normal step would scroll past the whole scrolling area and lose the overlap.
+    var firstScrollStepFraction: Double = 0.25
     var maxSteps = 200
     /// Height limit of the result, in pixels.
     var maxResultHeight = 40_000
@@ -66,7 +69,8 @@ final class ScrollCaptureSession {
         break
       }
 
-      let stepInPoints = max(10, Int(Double(scrollingAreaHeight) * configuration.scrollStepFraction / target.scale))
+      let stepFraction = knownStickyParts == nil ? configuration.firstScrollStepFraction : configuration.scrollStepFraction
+      let stepInPoints = max(10, Int(Double(scrollingAreaHeight) * stepFraction / target.scale))
       scroller.scroll(byPoints: -Int32(stepInPoints), at: target.centerInGlobalQuartz)
       steps += 1
 
