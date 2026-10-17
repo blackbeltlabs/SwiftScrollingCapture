@@ -56,9 +56,12 @@ struct OverlapFinder {
 
     let height = previous.count
 
+    // Rows are compared with `isSimilar(to:)` throughout: the same content can be rasterised differently
+    // between two frames (see `RowSignature`).
+
     // 1. Rows that stayed in place at the top / bottom are sticky parts, they are not searched.
     var fixedTop = 0
-    while fixedTop < height && previous[fixedTop] == next[fixedTop] {
+    while fixedTop < height && previous[fixedTop].isSimilar(to: next[fixedTop]) {
       fixedTop += 1
     }
 
@@ -67,7 +70,8 @@ struct OverlapFinder {
     }
 
     var fixedBottom = 0
-    while fixedBottom < height - fixedTop && previous[height - 1 - fixedBottom] == next[height - 1 - fixedBottom] {
+    while fixedBottom < height - fixedTop
+            && previous[height - 1 - fixedBottom].isSimilar(to: next[height - 1 - fixedBottom]) {
       fixedBottom += 1
     }
 
@@ -125,7 +129,7 @@ struct OverlapFinder {
     // 3. No movement proven. If almost everything is still in place, only a small dynamic part changed
     // (e.g. a blinking caret) and the content did not scroll. This goes before step 4: at the end of a page
     // a blank area "fits" any offset, and trusting the requested distance there would add blank rows forever.
-    let rowsInPlace = zip(previous, next).reduce(0) { $0 + ($1.0 == $1.1 ? 1 : 0) }
+    let rowsInPlace = zip(previous, next).reduce(0) { $0 + ($1.0.isSimilar(to: $1.1) ? 1 : 0) }
     if Double(rowsInPlace) >= Double(height) * minimumMatchRatio {
       return .identical
     }
@@ -196,7 +200,7 @@ struct OverlapFinder {
     var total = 0
     var distinct = 0
 
-    for row in regionStart..<(regionStart + regionHeight) where previous[row] == next[row] {
+    for row in regionStart..<(regionStart + regionHeight) where previous[row].isSimilar(to: next[row]) {
       total += 1
       if !previous[row].isUniform {
         distinct += 1
@@ -234,7 +238,7 @@ struct OverlapFinder {
 
     for k in 0..<overlapRows {
       let previousRow = previous[regionStart + offset + k]
-      if previousRow == next[regionStart + k] {
+      if previousRow.isSimilar(to: next[regionStart + k]) {
         if !previousRow.isUniform {
           distinctMatches += 1
         }

@@ -119,6 +119,17 @@ class ContentViewModel: ObservableObject {
         let url = saveToDesktop(result.image, fileName: "scroll_capture.png")
         image = NSImage(cgImage: result.image, size: .zero)
         status = "Done: \(result.stopReason), \(result.steps) steps, \(result.image.width)x\(result.image.height) px. Saved to \(url?.path ?? "nowhere (saving failed)")"
+        // Keep the two frames that did not match, to see what changed between them.
+        if let frames = result.lostOverlapFrames {
+          let previousURL = saveToDesktop(frames.previous, fileName: "scroll_capture_lost_previous.png")
+          let nextURL = saveToDesktop(frames.next, fileName: "scroll_capture_lost_next.png")
+          status += previousURL != nil && nextURL != nil
+            ? ". The two unmatched frames are saved next to it as scroll_capture_lost_*.png"
+            : ". Saving the two unmatched frames failed"
+        }
+      } catch is CancellationError {
+        // Esc before the first frame was captured: nothing to save.
+        status = "Cancelled before the first frame."
       } catch {
         status = "Capture failed: \(error.localizedDescription)"
       }

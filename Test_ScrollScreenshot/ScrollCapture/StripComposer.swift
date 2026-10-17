@@ -9,13 +9,15 @@ import CoreGraphics
 struct StripComposer {
   let width: Int
 
-  /// Rows emitted so far (normalised RGBA, see `FrameBuffer`).
-  private(set) var pixels: [UInt8] = []
+  /// Rows emitted so far (normalised RGBA, see `FrameBuffer`). `Data`, not `[UInt8]`, so `makeImage()` can hand
+  /// it to Core Graphics without copying the (possibly hundreds of MB) buffer.
+  private(set) var pixels = Data()
   private(set) var height = 0
 
   /// Latest frame. Its rows starting from `emittedEnd` are not in `pixels` yet.
   private var lastFrame: FrameBuffer
   private var emittedEnd = 0
+  private var isFinished = false
 
   init(firstFrame: FrameBuffer) {
     width = firstFrame.width
@@ -24,6 +26,7 @@ struct StripComposer {
 
   /// `overlap` must describe how `next` relates to the frame passed before it.
   mutating func append(_ next: FrameBuffer, overlap: FrameOverlap) {
+    precondition(!isFinished, "makeImage() was already called")
     precondition(next.width == width && next.height == lastFrame.height, "All frames must have the same size")
 
     // Emit the previous frame up to the start of its sticky footer.
@@ -44,15 +47,20 @@ struct StripComposer {
     height + lastFrame.height - emittedEnd
   }
 
-  func makeImage() throws -> CGImage {
-    var result = self
-    result.appendRows(of: lastFrame, emittedEnd..<lastFrame.height)
-    return try FrameBuffer.makeImage(pixels: result.pixels, width: width, height: result.height)
+  /// Emits the rest of the last frame and builds the image. Mutating so the rows are appended in place: a copy of
+  /// the composer would duplicate the whole buffer just to add the tail. No `append` is allowed after this.
+  mutating func makeImage() throws -> CGImage {
+    if !isFinished {
+      appendRows(of: lastFrame, emittedEnd..<lastFrame.height)
+      emittedEnd = lastFrame.height
+      isFinished = true
+    }
+    return try FrameBuffer.makeImage(pixels: pixels, width: width, height: height)
   }
 
   private mutating func appendRows(of frame: FrameBuffer, _ range: Range<Int>) {
     guard !range.isEmpty else { return }
-    pixels.append(contentsOf: frame.rowBytes(range))
+    frame.rowBytes(range).withUnsafeBytes { pixels.append(contentsOf: $0) }
     height += range.count
   }
 }
